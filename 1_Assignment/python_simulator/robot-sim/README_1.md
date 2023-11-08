@@ -8,6 +8,8 @@ In the roobt simulator are present a robot, and some token. In our case we have 
 The goal of this assignment is to write a python node that controls the robot to out all the golden boxes together.
 Here I will put the pseudocode of my controller
 
+for run the code: 
+python3 run.py assignment.py 
 ## Pseudocode  
 
 I need some set and list for consider all teh case 
