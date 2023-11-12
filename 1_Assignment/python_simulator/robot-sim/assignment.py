@@ -149,17 +149,15 @@ def drive_to_first_token(dist, rot_y, d_thr):
 def main():
     """The main function has to find the first marker, and then carry to him all the marker presents in arena"""
     """ Consider out of while the case of first token found"""     
-    var = 1
-    count = 0
-    while(var):
+    
+    # turning the robot for searching all the token in the arena
+    for i in range(13):
         turn(20, 0.5)
         marker = R.see()
         for m in marker:
-            total_markers.add(m.info.code)  
-        print(total_markers) 
-        count += 1
-        if count == 15:
-            var = 0
+            total_markers.add(m.info.code)
+        if i == 14:
+            break
     
     grab = False
     while 1: 
@@ -173,9 +171,7 @@ def main():
                 print("I can't see any token!!")
                 turn(-20, 0.5)           
             else:
-                dist, rot_y, token = find_token() # we look for the nearest marker
-                print("near token")
-                print(token.info.code)  
+                dist, rot_y, token = find_token() # we look for the nearest marker  
                 print("release set")
                 print(marker_release)
                 print("found set")
@@ -208,7 +204,7 @@ def main():
                         print(token.info.code)
                         
                         if token.info.code in marker_release: 
-                            print("SECOND IF -> if")                        
+                            #print("SECOND IF -> if")                        
                             print(token.info.code)
                             if drive_to_first_token(dist, rot_y, 0.5) == 1:
                                 print("arrived to first token")
