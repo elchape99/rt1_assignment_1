@@ -72,7 +72,148 @@ I need some set and list for consider all teh case
 	 			if drive_to_token == 1
 	 				marker_found.aend(token.info.code)
 	 				grab = R.grab() 		#set grab to true 
-	 					
- 		 
-				
+	 				
+	 				
+	 				
+	 				
+# Import necessary modules
+from __future__ import print_function
+import time
+from sr.robot import *
 
+# Global variables
+- `a_th`: Threshold for controlling orientation
+- `d_th`: Threshold for controlling linear distance
+- `R`: Robot instance
+- `marker_found`: List to store codes of found markers
+- `marker_release`: Set to store codes of released markers near the first box
+- `total_markers`: Set to keep track of all markers in the environment
+- `last_detection_time`: Variable to store the timestamp of the last token detection
+
+## Functions
+
+### `drive(speed, seconds)`
+- Set power of left and right motors to `speed`
+- Wait for `seconds`
+- Set power of left and right motors to 0
+
+### `turn(speed, seconds)`
+- Set power of left motor to `speed`
+- Set power of right motor to `-speed`
+- Wait for `seconds`
+- Set power of left and right motors to 0
+
+### `find_token()`
+- Initialize distance to a large value
+- For each token in the robot's field of view:
+  - If token's distance is less than current distance:
+    - Update distance and rotation with token's distance and rotation
+- If no token is found:
+  - Return -1
+- Else:
+  - Update `last_detection_time` with current timestamp
+  - Return distance, rotation, and the detected token
+
+### `find_first_token()`
+- Initialize distance to a large value
+- For each token in the robot's field of view:
+  - If token's distance is less than current distance and greater than `d_th`:
+    - Update distance and rotation with token's distance and rotation
+- If no suitable token is found:
+  - Return -1
+- Else:
+  - Update `last_detection_time` with current timestamp
+  - Return distance, rotation, and the detected token
+
+### `drive_to_token(dist, rot_y, d_thr)`
+- If distance to the token is less than `d_th`:
+  - Return 1
+- Else if robot is well aligned with the token:
+  - Call `drive` function with forward speed
+- Else if rotation is less than `-a_th`:
+  - Call `turn` function with left turn speed
+- Else if rotation is greater than `a_th`:
+  - Call `turn` function with right turn speed
+
+### `drive_to_first_token(dist, rot_y, d_thr)`
+- (Similar to `drive_to_token` function with some modifications)
+
+# Main function
+function main():
+    Set 'var' to 1
+    Set 'count' to 0
+
+    # Initial rotation to gather information about markers
+    While 'var':
+        Call turn function with a constant speed for a short duration
+        For each detected marker:
+            Add marker code to the 'total_markers' set
+            Increment 'count'
+            If 'count' reaches 15:
+                Set 'var' to 0
+        Set 'grab' to False
+    
+    While True:
+        If 'total_markers' set is empty:
+            Print "Work done"
+            Exit the loop
+        Else:
+            # Now, look for other markers
+            If no token is detected:
+                Print "I can't see any token!!"
+                Call turn function with a negative speed
+            Else:
+                Obtain distance, rotation, and token information
+
+                If token is already released and not grabbed:
+                    Print "Already posed, find another token"
+                    Call turn function with a negative speed
+
+                If token is grabbed:
+                    Call find_first_token function to find the first token
+                    If no suitable token is detected:
+                        Print "Can't see any token!!"
+                        Call turn function with a negative speed
+                    Else:
+                        Obtain distance, rotation, and token information
+                        Print detected token code
+                        If token is in the marker release set:
+                            Call drive_to_first_token function to drive to the first token
+                            If arrived at the first token:
+                                Print "Arrived at first token"
+                                Print "Release the marker and add to release set"
+                                Call R.release() to release the marker
+                                Remove one element from 'total_markers' set
+                                Add last element of 'marker_found' list to 'marker_release' set
+                                Set 'grab' to False
+                                Call drive function with reverse speed
+
+                        Else:
+                            Call turn function with a negative speed
+
+                If token is not in the marker release set and not grabbed:
+                    If marker release set is empty:
+                        Print "Drive to the first nearest token"
+                        Call drive_to_token function to drive to the first nearest token
+                        If arrived at the token:
+                            Add token code to 'marker_found' list
+                            Set 'grab' to True
+                            Call R.release() to release the marker
+                            Remove one element from 'total_markers' set
+                            Print "Add marker to marker_release set"
+                            Add token code to 'marker_release' set
+                            Set 'grab' to False
+                            Call drive function with reverse speed
+
+                    Else:
+                        Call drive_to_token function to drive to the token
+                        If arrived at the token:
+                            Add token code to 'marker_found' list
+                            Set 'grab' to True
+
+                        Update last_detection_time with current timestamp
+
+
+# Execute the main function if the script is the main module
+if __name__ == "__main__":
+  main()
