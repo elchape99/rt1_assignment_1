@@ -151,3 +151,8 @@ function main():
 ## Execute the main function if the script is the main module
 if __name__ == "__main__":
   main()
+  
+  
+  
+## Possible improvment  
+One possible improvment is to create a function usefull for avoiding the obstacle, for example if the robot have an obstacle in his trajectory he need to avoid this obstacle
