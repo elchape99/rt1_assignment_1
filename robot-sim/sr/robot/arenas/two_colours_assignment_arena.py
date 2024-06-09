@@ -9,13 +9,15 @@ from arena import ARENA_MARKINGS_COLOR, ARENA_MARKINGS_WIDTH, Arena
 from ..markers import Token
 from ..vision import MARKER_TOKEN_GOLD, MARKER_TOKEN_SILVER
 
+import random
+
 HOME_ZONE_SIZE = 2.5
 
 INNER_CIRCLE_RADIUS = 0.9
 OUTER_CIRCLE_RADIUS = 2.4  # Some tokens are at 1200ish, others at 1270ish
 TOKENS_PER_CIRCLE = 6
 PEDESTAL_COLOR = (0x80, 0x80, 0x80)
-
+rad = random.uniform(0.9, 2.5)
 
 class GoldToken(Token):
     def __init__(self, arena, marker_number):
@@ -49,6 +51,7 @@ class TwoColoursAssignmentArena(Arena):
                       0.75 * pi,
                       -0.75 * pi,
                       -0.25 * pi]
+                  
 
     def __init__(self, objects=None, wall_markers=False):
         super(TwoColoursAssignmentArena, self).__init__(objects, wall_markers)
@@ -60,11 +63,12 @@ class TwoColoursAssignmentArena(Arena):
                 rotation_amount = 0
                 token = token_type(self, number_offset + i)
                 angle = angle_offset + (2 * pi / TOKENS_PER_CIRCLE) * i
+
                 token.location = (cos(angle) * radius, sin(angle) * radius)
                 token.heading = rotation_amount
                 self.objects.append(token)
 
-        place_token_circle(OUTER_CIRCLE_RADIUS, number_offset=TOKENS_PER_CIRCLE,
+        place_token_circle(rad, number_offset=TOKENS_PER_CIRCLE,
                            angle_offset=1.5 * pi, rotate_silvers=pi / 4)
 
     def draw_background(self, surface, display):

@@ -1,9 +1,11 @@
-
 from __future__ import print_function
 import string
 
 import time
 from sr.robot import *
+
+import os
+import timeit
 
 #global variables
 a_th = 1.5
@@ -115,7 +117,7 @@ def drive_to_token(dist, rot_y, d_thr):
         return 1          
     elif -a_th <= rot_y <= a_th:  # if the robot is well aligned with the token, we go forward
         print("Ah, here we are!.")
-        drive(60, 0.1)
+        drive(100, 0.1)
     #Control the rotation of the robot respect to marker
     elif rot_y < -a_th:  
         print("Left a bit...")
@@ -135,7 +137,7 @@ def drive_to_first_token(dist, rot_y, d_thr):
         return 1          
     elif -a_th <= rot_y <= a_th:  # if the robot is well aligned with the token, we go forward
         print("Ah, here we are!.")
-        drive(60, 0.1)
+        drive(80, 0.1)
     #Control the rotation of the robot respect to marker
     elif rot_y < -a_th:  
         print("Left a bit...")
@@ -148,7 +150,10 @@ def drive_to_first_token(dist, rot_y, d_thr):
            
 def main():
     """The main function has to find the first marker, and then carry to him all the marker presents in arena"""
-    """ Consider out of while the case of first token found"""     
+    """ Consider out of while the case of first token found"""  
+
+    start_time = timeit.default_timer()
+   
     
     # turning the robot for searching all the token in the arena
     for i in range(13):
@@ -163,7 +168,9 @@ def main():
     while 1: 
         if(len(total_markers) == 0):
             print("work done")
-            exit()
+            end_time = timeit.default_timer()
+            execution_time = end_time - start_time  
+
         else:
             #Now i look for the other marker
             if find_token() == -1: #control that the robot can see the object
@@ -246,8 +253,8 @@ def main():
                         if drive_to_token(dist, rot_y, d_th) == 1:
                             marker_found.append(token.info.code) #Put the marker code inside the list of founded marker                   
                             grab = R.grab() #set to true the grab value
-                                    
-                 
+
+    
                          
 
 main()
