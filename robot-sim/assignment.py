@@ -152,7 +152,6 @@ def main():
     """The main function has to find the first marker, and then carry to him all the marker presents in arena"""
     """ Consider out of while the case of first token found"""  
 
-    start_time = timeit.default_timer()
    
     
     # turning the robot for searching all the token in the arena
@@ -164,12 +163,16 @@ def main():
         if i == 14:
             break
     
+    print ("all the markers in the arena are:")
+    print(total_markers)
+    # Call the user the possibility of chose one box as reference 
+    reference_token = int(input("Chose the reference box: "))
+    
+
     grab = False
     while 1: 
         if(len(total_markers) == 0):
             print("work done")
-            end_time = timeit.default_timer()
-            execution_time = end_time - start_time  
 
         else:
             #Now i look for the other marker
@@ -184,12 +187,32 @@ def main():
                 print("found set")
                 print(marker_found)  
                 print("total markers")
-                print(total_markers)                  
-            
+                print(total_markers)       
+                ################################################################
+                ################################################################
+                #Part related to the exam
+                # I have to find forst the reference token and put in in the release list
+                # I checked if i have found the first token
+                if marker_release == 0:
+                    # In this case I have to find the reference token, and I want to drive to him
+                    if token.info.code == reference_token:
+                        print("I have found the reference token")
+                        if drive_to_token(dist, rot_y, d_th) == 1:
+                            marker_found.append(token.info.code)
+                            grab = R.grab()
+                            R.release()
+                            marker_release.add(token.info.code)
+                            total_markers.pop()
+                            grab = False
+                            drive(-20, 1)      
+                    else:
+                        # Case when the robot can't see the reference token, so I have to find it
+                        turn(-20, 0.5)     
+                
                 ###########################################################################################
                 #if the marker is release jet and not grab, entre here if the token is in the correct area
                 
-                if token.info.code in marker_release and not(grab):
+                elif token.info.code in marker_release and not(grab):
                     #print("FIRST IF")
                     print("I have already pose this token, need to find an other token")
                     turn(-20, 0.5) #turn because I have founded that marker jet
